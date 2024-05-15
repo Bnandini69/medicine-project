@@ -90,7 +90,7 @@ export const MedicineDetails: FC<Props> = ({ data }) => {
 
 
   const saltForms:any= salt_forms_json;
-  const renderSaltForms = () => {
+  const renderSaltFarms = () => {
     return Object.keys(saltForms).map((salt) => (
       <React.Fragment key={salt}>
         <Tag color={activeMeds.Forms === salt ? "green" : "grey"}>
@@ -132,7 +132,7 @@ export const MedicineDetails: FC<Props> = ({ data }) => {
   return (
     <Card>
       <div className="d-flex" style={{ justifyContent: 'center' }}>
-        <Row>Farm: <div style={{ width: "30%" }}>{renderSaltForms()}</div></Row>
+        <Row>Farm: <div style={{ width: "30%" }}>{renderSaltFarms()}</div></Row>
         {renderStrengthData()}
         {renderPackagingData()}
         {renderDetails()}
