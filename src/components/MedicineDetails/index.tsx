@@ -7,30 +7,32 @@ interface Props {
 }
 
 export const MedicineDetails: FC<Props> = ({ data }) => {
-  // interface MedsData {
-  //   Forms: string;
-  //   Strength: string;
-  // }
   const { available_forms = [], salt_forms_json = {} } = data;
+  // state to check active Medicines
   const [activeMeds, setActiveMeds] = useState({
     Forms: "",
     Strength: "",
     Packaging: "",
   });
-  const handleData = (salt: Object): JSX.Element[] => {
+  // This function handles strength data
+  const handleStrengthData = (salt: Object): JSX.Element[] => {
     return Object.keys(salt).map((strength,index) => {
       return <div key={strength} onClick={()=>handleActiveMedsStrength(strength)}> 
       <Tag color={activeMeds?.Strength===strength?"green":"grey"}> {strength}</Tag>
       </div>;
     });
   };
-
+  // This function handles packaging data
   const handlePackagingData = (strength: Object): JSX.Element => {
     const elements = Object.keys(strength).map((packaging) => {
       return <div key={packaging} onClick={()=>handleActiveMedsPackaging(packaging)}> <Tag color={activeMeds?.Packaging===packaging?"green":"grey"}>{packaging}</Tag></div>;
     });
     return <>{elements}</>;
   };
+  const handleAvailableMedicines=()=>{
+
+  }
+   // This function handles active meds data when we select Farm
   const handleActiveMedsForms = (salt: string) => {
     setActiveMeds((prev) => {
       const newStrength = Object.keys(salt_forms_json[salt])[0];
@@ -42,7 +44,9 @@ export const MedicineDetails: FC<Props> = ({ data }) => {
         Packaging: newPackaging 
       };
     });
+  
   }
+   // This function handles active meds data when we select Strength
   const handleActiveMedsStrength = (strength: string) => {
     setActiveMeds((prev) => {
       const newPackaging = Object.keys(salt_forms_json[prev?.Forms][strength])[0];
@@ -53,6 +57,7 @@ export const MedicineDetails: FC<Props> = ({ data }) => {
       };
     });
   }
+     // This function handles active meds data when we select Packaging
   const handleActiveMedsPackaging = (packaging: string) => {
     setActiveMeds((prev) => {
       return { 
@@ -61,6 +66,7 @@ export const MedicineDetails: FC<Props> = ({ data }) => {
       };
     });
   }
+   // This function handles logic to find minimum price of meds and if its out of stock
   const handlePharmacyPrice = (packaging: { [key: string]: { selling_price: number | null }[] | null }): JSX.Element => {
     let min = Infinity;
     Object.keys(packaging || {}).forEach((key: string) => {
@@ -74,26 +80,28 @@ export const MedicineDetails: FC<Props> = ({ data }) => {
       }
     });
   
-    // If no valid price was found, set min to a fallback value
     const displayMin = min === Infinity ? "No valid prices available" : `From ${min}`;
   
     return <>{displayMin}</>;
   };
 
+
+
   useEffect(() => {
     handleActiveMedsForms(Object.keys(salt_forms_json)[0])
   }, [])
+
+  // useEffect(() => {
+  //   handleActiveMedsForms(Object.keys(salt_forms_json)[0])
+  // }, [])
   
   const saltForms: any = salt_forms_json;
   return (
     <>
-
-   
-
-    {activeMeds?.Forms? <Card><div className='d-flex' style={{ justifyContent: 'center', flexDirection: 'row' }}>
+    {activeMeds?.Forms? <Card><div className='d-flex' style={{ justifyContent: 'center' }}>
+      {/* render farm data */}
     <Row>
-        Forms:
-      
+        Farm:
         <div style={{width:"30%"}}>
         {Object.keys(saltForms).map((salt, index) => (
           <React.Fragment key={index}>
@@ -110,16 +118,19 @@ export const MedicineDetails: FC<Props> = ({ data }) => {
         ))}
             </div>
             </Row>
-     <Row> Strength: {handleData(saltForms[activeMeds?.Forms])}</Row>   
+          {/* render strength data */}
+     <Row> Strength: {handleStrengthData(saltForms[activeMeds?.Forms])}</Row>   
+     {/* render packaging data */}
      <Row>    Packaging:
         {handlePackagingData(
           saltForms[activeMeds?.Forms][activeMeds?.Strength]
         )}
         </Row> 
-
+  {/* render salt details */}
     <div className='d-flex' style={{ alignItems: 'center' }}>
         {activeMeds?.Forms}|{activeMeds?.Strength}|{activeMeds?.Packaging}
         </div>
+        {/* render pharmacy price */}
         <div className='d-flex' style={{ alignItems: 'center' }}>
           <Row>  {handlePharmacyPrice(saltForms[activeMeds?.Forms]?.[activeMeds?.Strength]?.[activeMeds?.Packaging])}</Row>
     </div>
