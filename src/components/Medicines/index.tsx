@@ -3,9 +3,6 @@ import React from 'react';
 import { MedicineDetails } from '../MedicineDetails';
 
 type Props = {};
-
-
-
 export interface Medicine {
   available_forms: string[];
   salt_forms_json: { [key: string]: any };
@@ -13,11 +10,7 @@ export interface Medicine {
 export const Medicines: FC<Props> = () => {
   const [searchData, setSearchData] = useState<string>('');
   const [medicinesData, setMedicinesData] = useState<Medicine[]>([]);
-  // const [activeMeds, setActiveMeds] = useState<MedsData>({
-  //   Forms: '',
-  //   Strength: '',
-  // });
-
+  
   const fetchData = async (): Promise<void> => {
     debugger;
     try {
@@ -54,11 +47,7 @@ export const Medicines: FC<Props> = () => {
           </>
         );
       })}
-      <pre>
-        {JSON.stringify(medicinesData?.[1]?.salt_forms_json?.[0], null, 2)}
-      </pre>
-      <pre> {JSON.stringify(medicinesData?.[1]?.salt_forms_json, null, 2)}</pre>
-      {searchData}
+  
     </>
   );
 };

@@ -1,5 +1,6 @@
 import React, { FC, useEffect, useState } from 'react';
 import { Medicine } from '../Medicines';
+import { Card, Row, Tag } from 'antd';
 
 interface Props {
   data: Medicine;
@@ -17,14 +18,16 @@ export const MedicineDetails: FC<Props> = ({ data }) => {
     Packaging: "",
   });
   const handleData = (salt: Object): JSX.Element[] => {
-    return Object.keys(salt).map((strength) => {
-      return <div key={strength} onClick={()=>handleActiveMedsStrength(strength)}> {strength}</div>;
+    return Object.keys(salt).map((strength,index) => {
+      return <div key={strength} onClick={()=>handleActiveMedsStrength(strength)}> 
+      <Tag color={activeMeds?.Strength===strength?"green":"grey"}> {strength}</Tag>
+      </div>;
     });
   };
 
   const handlePackagingData = (strength: Object): JSX.Element => {
     const elements = Object.keys(strength).map((packaging) => {
-      return <div key={packaging} onClick={()=>handleActiveMedsPackaging(packaging)}> {packaging}</div>;
+      return <div key={packaging} onClick={()=>handleActiveMedsPackaging(packaging)}> <Tag color={activeMeds?.Packaging===packaging?"green":"grey"}>{packaging}</Tag></div>;
     });
     return <>{elements}</>;
   };
@@ -84,37 +87,46 @@ export const MedicineDetails: FC<Props> = ({ data }) => {
   const saltForms: any = salt_forms_json;
   return (
     <>
-    {activeMeds?.Forms? <div className='d-flex' style={{ justifyContent: 'center', flexDirection: 'row' }}>
-      <div style={{ marginRight: '20px' }}>
+
+   
+
+    {activeMeds?.Forms? <Card><div className='d-flex' style={{ justifyContent: 'center', flexDirection: 'row' }}>
+    <Row>
         Forms:
+      
+        <div style={{width:"30%"}}>
         {Object.keys(saltForms).map((salt, index) => (
           <React.Fragment key={index}>
-            <p
-              style={{ border: '1px solid blue',cursor:"pointer" }}
+            <Tag color={activeMeds?.Forms===salt?"green":"grey"}> <p
               onClick={() =>
                 handleActiveMedsForms(salt)
               }
             >
               {salt}
-            </p>
+            </p></Tag>
+           
             <br />
           </React.Fragment>
         ))}
-        Strength: {handleData(saltForms[activeMeds?.Forms])}
-        Packaging:
+            </div>
+            </Row>
+     <Row> Strength: {handleData(saltForms[activeMeds?.Forms])}</Row>   
+     <Row>    Packaging:
         {handlePackagingData(
           saltForms[activeMeds?.Forms][activeMeds?.Strength]
         )}
-    </div>
+        </Row> 
+
     <div className='d-flex' style={{ alignItems: 'center' }}>
         {activeMeds?.Forms}|{activeMeds?.Strength}|{activeMeds?.Packaging}
         </div>
         <div className='d-flex' style={{ alignItems: 'center' }}>
-        
-        {handlePharmacyPrice(saltForms[activeMeds?.Forms]?.[activeMeds?.Strength]?.[activeMeds?.Packaging])}
- 
+          <Row>  {handlePharmacyPrice(saltForms[activeMeds?.Forms]?.[activeMeds?.Strength]?.[activeMeds?.Packaging])}</Row>
     </div>
-      </div>:<>
+      </div>
+ 
+      </Card>
+        :<>
       Loading.....
       </>}
     </>
