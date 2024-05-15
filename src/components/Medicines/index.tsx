@@ -11,11 +11,11 @@ export const Medicines: FC<Props> = () => {
   const [searchData, setSearchData] = useState<string>('');
   const [medicinesData, setMedicinesData] = useState<Medicine[]>([]);
   
-  const fetchData = async (): Promise<void> => {
+  const fetchData = async (searchData:string|""): Promise<void> => {
     debugger;
     try {
       await fetch(
-        'https://backend.cappsule.co.in/api/v1/new_search?q=paracetamol&pharmacyIds=1,2,3'
+        `https://backend.cappsule.co.in/api/v1/new_search?q=${searchData}&pharmacyIds=1,2,3`
       )
         .then((res) => res.json())
         .then((response) => setMedicinesData(response?.data?.saltSuggestions))
@@ -26,7 +26,7 @@ export const Medicines: FC<Props> = () => {
   };
 
   useEffect(() => {
-    fetchData();
+    fetchData("paracetamol");
   }, []);
 
   return (
@@ -36,17 +36,22 @@ export const Medicines: FC<Props> = () => {
         <input
           value={searchData}
           onChange={(e) => setSearchData(e.target.value)}
+          onKeyDown={(event)=>  {if (event.key === 'Enter') {
+            setMedicinesData([]);
+            fetchData(searchData);
+
+          }}}
           placeholder="Type your name here"
         />
         Search
       </div>
-      {medicinesData?.map((data: Medicine) => {
+      { medicinesData?.length ? medicinesData?.map((data: Medicine) => {
         return (
           <>
             <MedicineDetails data={data} />
           </>
         );
-      })}
+      }): "No data found"}
   
     </>
   );

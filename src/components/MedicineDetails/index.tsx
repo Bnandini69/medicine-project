@@ -9,10 +9,13 @@ interface Props {
 export const MedicineDetails: FC<Props> = ({ data }) => {
   const { available_forms = [], salt_forms_json = {} } = data;
   // state to check active Medicines
+    const firstFarm=Object.keys(salt_forms_json)[0];
+    const firstStrength= Object.keys(salt_forms_json[firstFarm])[0];
+    const firstPackaging= Object.keys(salt_forms_json[firstFarm][firstStrength])[0];
   const [activeMeds, setActiveMeds] = useState({
-    Forms: "",
-    Strength: "",
-    Packaging: "",
+    Forms: firstFarm,
+    Strength: firstStrength,
+    Packaging: firstPackaging,
   });
   // This function handles strength data
   const handleStrengthData = (salt: Object): JSX.Element[] => {
@@ -85,15 +88,6 @@ export const MedicineDetails: FC<Props> = ({ data }) => {
     return <>{displayMin}</>;
   };
 
-
-
-  useEffect(() => {
-    handleActiveMedsForms(Object.keys(salt_forms_json)[0])
-  }, [])
-
-  // useEffect(() => {
-  //   handleActiveMedsForms(Object.keys(salt_forms_json)[0])
-  // }, [])
   
   const saltForms: any = salt_forms_json;
   return (
