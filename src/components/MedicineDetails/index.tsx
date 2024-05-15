@@ -88,53 +88,59 @@ export const MedicineDetails: FC<Props> = ({ data }) => {
     return <>{displayMin}</>;
   };
 
-  
-  const saltForms: any = salt_forms_json;
-  return (
-    <>
-    {activeMeds?.Forms? <Card><div className='d-flex' style={{ justifyContent: 'center' }}>
-      {/* render farm data */}
-    <Row>
-        Farm:
-        <div style={{width:"30%"}}>
-        {Object.keys(saltForms).map((salt, index) => (
-          <React.Fragment key={index}>
-            <Tag color={activeMeds?.Forms===salt?"green":"grey"}> <p
-              onClick={() =>
-                handleActiveMedsForms(salt)
-              }
-            >
-              {salt}
-            </p></Tag>
-           
-            <br />
-          </React.Fragment>
-        ))}
-            </div>
-            </Row>
-          {/* render strength data */}
-     <Row> Strength: {handleStrengthData(saltForms[activeMeds?.Forms])}</Row>   
-     {/* render packaging data */}
-     <Row>    Packaging:
-        {handlePackagingData(
-          saltForms[activeMeds?.Forms][activeMeds?.Strength]
-        )}
-        </Row> 
-  {/* render salt details */}
-    <div className='d-flex' style={{ alignItems: 'center' }}>
-      {salt}
-        {activeMeds?.Forms}|{activeMeds?.Strength}|{activeMeds?.Packaging}
-        </div>
-        {/* render pharmacy price */}
-        <div className='d-flex' style={{ alignItems: 'center' }}>
-          <Row>  {handlePharmacyPrice(saltForms[activeMeds?.Forms]?.[activeMeds?.Strength]?.[activeMeds?.Packaging])}</Row>
-    </div>
+
+  const saltForms:any= salt_forms_json;
+  const renderSaltForms = () => {
+    return Object.keys(saltForms).map((salt) => (
+      <React.Fragment key={salt}>
+        <Tag color={activeMeds.Forms === salt ? "green" : "grey"}>
+          <p onClick={() => handleActiveMedsForms(salt)}>{salt}</p>
+        </Tag>
+        <br />
+      </React.Fragment>
+    ));
+  };
+
+  const renderStrengthData = () => {
+    return <Row>Strength: {handleStrengthData(saltForms[activeMeds.Forms])}</Row>;
+  };
+
+  const renderPackagingData = () => {
+    return (
+      <Row>
+        Packaging: {handlePackagingData(saltForms[activeMeds.Forms]?.[activeMeds.Strength])}
+      </Row>
+    );
+  };
+
+  const renderPharmacyPrice = () => {
+    return (
+      <Row>
+        {handlePharmacyPrice(saltForms[activeMeds.Forms]?.[activeMeds.Strength]?.[activeMeds.Packaging])}
+      </Row>
+    );
+  };
+
+  const renderDetails = () => {
+    return (
+      <div className="d-flex" style={{ alignItems: 'center' }}>
+        {activeMeds.Forms} | {activeMeds.Strength} | {activeMeds.Packaging}
       </div>
- 
-      </Card>
-        :<>
-      Loading.....
-      </>}
-    </>
+    );
+  };
+
+  return (
+    <Card>
+      <div className="d-flex" style={{ justifyContent: 'center' }}>
+        <Row>Farm: <div style={{ width: "30%" }}>{renderSaltForms()}</div></Row>
+        {renderStrengthData()}
+        {renderPackagingData()}
+        {renderDetails()}
+        <div className="d-flex" style={{ alignItems: 'center' }}>
+          {renderPharmacyPrice()}
+        </div>
+      </div>
+    </Card>
   );
 };
+
