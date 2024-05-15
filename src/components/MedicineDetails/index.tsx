@@ -7,7 +7,7 @@ interface Props {
 }
 
 export const MedicineDetails: FC<Props> = ({ data }) => {
-  const { available_forms = [], salt_forms_json = {} } = data;
+  const { available_forms = [], salt_forms_json = {},salt } = data;
   // state to check active Medicines
     const firstFarm=Object.keys(salt_forms_json)[0];
     const firstStrength= Object.keys(salt_forms_json[firstFarm])[0];
@@ -122,6 +122,7 @@ export const MedicineDetails: FC<Props> = ({ data }) => {
         </Row> 
   {/* render salt details */}
     <div className='d-flex' style={{ alignItems: 'center' }}>
+      {salt}
         {activeMeds?.Forms}|{activeMeds?.Strength}|{activeMeds?.Packaging}
         </div>
         {/* render pharmacy price */}

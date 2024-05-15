@@ -5,6 +5,7 @@ import { MedicineDetails } from '../MedicineDetails';
 type Props = {};
 export interface Medicine {
   available_forms: string[];
+  salt:string;
   salt_forms_json: { [key: string]: any };
 }
 export const Medicines: FC<Props> = () => {
