@@ -3,20 +3,22 @@ import React from "react";
 import { MedicineDetails } from "../MedicineDetails";
 import "./styles.css";
 import { ArrowLeftOutlined, SearchOutlined } from "@ant-design/icons";
+import { Pagination, PaginationProps } from "antd";
 
 type Props = {};
 export interface Medicine {
   available_forms: string[];
-  salt:string;
+  salt: string;
   salt_forms_json: { [key: string]: any };
 }
 export const Medicines: FC<Props> = () => {
   const [searchData, setSearchData] = useState<string>("");
   const [medicinesData, setMedicinesData] = useState<Medicine[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const fetchData = async (searchData: string | ""): Promise<void> => {
-    console.log(searchData, "search");
     try {
+      setLoading(true);
       await fetch(
         `https://backend.cappsule.co.in/api/v1/new_search?q=${searchData}&pharmacyIds=1,2,3`
       )
@@ -25,6 +27,9 @@ export const Medicines: FC<Props> = () => {
         .catch((err) => console.log(err));
     } catch (error) {
       console.error("Error fetching data:", error);
+    }
+    finally {
+      setLoading(false);
     }
   };
 
@@ -52,15 +57,21 @@ export const Medicines: FC<Props> = () => {
         <span className="search-text"> Search</span>{" "}
       </div>
       <div className="divider"></div>
-      {medicinesData?.length
-        ? medicinesData?.map((data: Medicine) => {
-            return (
-              <>
-                <MedicineDetails data={data} />
-              </>
-            );
-          })
-        : "No data found"}
-    </>
+      {loading ? (
+      `  Loading...`
+      ) : (
+        <>
+          {medicinesData?.length
+            ? medicinesData?.map((data: Medicine) => {
+                return (
+                  <>
+                    <MedicineDetails data={data} />
+                  </>
+                );
+              })
+            : "No data found"}
+        </>
+      )}
+  </>
   );
 };

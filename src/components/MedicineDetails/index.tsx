@@ -23,6 +23,39 @@ export const MedicineDetails: FC<Props> = ({ data }) => {
     Packaging: firstPackaging,
   });
   const [showMore, setShowMore] = useState<FarmType>({Farm:false,Strength:false,Packaging:false});
+   // This function handles active meds data when we select Farm
+   const handleActiveMedsFarms = (salt: string) => {
+    setActiveMeds((prev) => {
+      const newStrength = Object.keys(salt_forms_json[salt])[0];
+      const newPackaging = Object.keys(salt_forms_json[salt][newStrength])[0];
+      return {
+        ...prev,
+        Farm: salt,
+        Strength: newStrength,
+        Packaging: newPackaging,
+      };
+    });
+  };
+  // This function handles active meds data when we select Strength
+  const handleActiveMedsStrength = (strength: string) => {
+    setActiveMeds((prev) => {
+      const newPackaging = Object.keys(salt_forms_json[prev?.Farm][strength])[0];
+      return {
+        ...prev,
+        Strength: strength,
+        Packaging: newPackaging,
+      };
+    });
+  };
+  // This function handles active meds data when we select Packaging
+  const handleActiveMedsPackaging = (packaging: string) => {
+    setActiveMeds((prev) => {
+      return {
+        ...prev,
+        Packaging: packaging,
+      };
+    });
+  };
 
   const handleShowMore = (key:string) => {
     setShowMore((prev)=>({...prev,[key]:true}));
@@ -72,6 +105,7 @@ export const MedicineDetails: FC<Props> = ({ data }) => {
       </>
     );
   };
+
   // This function handles packaging data
   const handlePackagingData = (strength: Object): JSX.Element => {
     const strengthKeys = Object.keys(strength);
@@ -87,43 +121,8 @@ export const MedicineDetails: FC<Props> = ({ data }) => {
           {renderFooter(strengthKeys,"Packaging")}
       </>;
   };
-  const handleAvailableMedicines = () => {};
-  // This function handles active meds data when we select Farm
-  const handleActiveMedsFarms = (salt: string) => {
-    console.log({salt})
-    setActiveMeds((prev) => {
-      const newStrength = Object.keys(salt_forms_json[salt])[0];
-      const newPackaging = Object.keys(salt_forms_json[salt][newStrength])[0];
-      return {
-        ...prev,
-        Farm: salt,
-        Strength: newStrength,
-        Packaging: newPackaging,
-      };
-    });
-  };
-  // This function handles active meds data when we select Strength
-  const handleActiveMedsStrength = (strength: string) => {
-    setActiveMeds((prev) => {
-      const newPackaging = Object.keys(salt_forms_json[prev?.Farm][strength])[0];
-      return {
-        ...prev,
-        Strength: strength,
-        Packaging: newPackaging,
-      };
-    });
-  };
-  // This function handles active meds data when we select Packaging
-  const handleActiveMedsPackaging = (packaging: string) => {
-    setActiveMeds((prev) => {
-      return {
-        ...prev,
-        Packaging: packaging,
-      };
-    });
-  };
-  // This function handles logic to find minimum price of meds and if its out of stock
-  const handlePharmacyPrice = (packaging: {
+   // This function handles logic to find minimum price of meds and if its out of stock
+   const handlePharmacyPrice = (packaging: {
     [key: string]: { selling_price: number | null }[] | null;
   }): JSX.Element => {
     let min = Infinity;
@@ -176,9 +175,11 @@ export const MedicineDetails: FC<Props> = ({ data }) => {
       </div>
     </Row>;
   };
+  const handleAvailableMedicines = () => {};
+ 
+  
 
   const saltForms: any = salt_forms_json;
-  console.log(activeMeds)
   return (
     <>
       {activeMeds?.Farm ? (
