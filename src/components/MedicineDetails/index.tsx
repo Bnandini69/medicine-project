@@ -3,6 +3,10 @@ import React, { FC, useState } from "react";
 import { Medicine } from "../Medicines";
 import "./styles.css";
 
+interface FarmType {
+  [key: string]: boolean
+}
+
 interface Props {
   data: Medicine;
 }
@@ -18,7 +22,7 @@ export const MedicineDetails: FC<Props> = ({ data }) => {
     Strength: firstStrength,
     Packaging: firstPackaging,
   });
-  const [showMore, setShowMore] = useState({Farm:false,Strength:false,Packaging:false});
+  const [showMore, setShowMore] = useState<FarmType>({Farm:false,Strength:false,Packaging:false});
 
   const handleShowMore = (key:string) => {
     setShowMore((prev)=>({...prev,[key]:true}));
@@ -27,7 +31,29 @@ export const MedicineDetails: FC<Props> = ({ data }) => {
   const handleShowLess = (key:string) => {
     setShowMore((prev)=>({...prev,[key]:false}));
   };
-  
+  //This functon handles more and hide section
+  const renderFooter=(saltKeys:string[],key:string): JSX.Element=>{
+   return(<>
+    { saltKeys.length > 2&&
+      (!showMore[key]  ?(
+         <p
+           key="show-more"
+           onClick={() => handleShowMore(key)}
+           style={{ cursor: 'pointer', color: 'blue' }}
+         >
+           ...more
+         </p>
+       ):  <p
+       key="show-more"
+       onClick={() => handleShowLess(key)}
+       style={{ cursor: 'pointer', color: 'blue' }}
+     >
+       ...hide
+     </p>)}
+     </>
+     )
+
+  }
   // This function handles strength data
   const handleStrengthData = (salt: Object): JSX.Element => {
     const saltKeys = Object.keys(salt);
@@ -41,23 +67,8 @@ export const MedicineDetails: FC<Props> = ({ data }) => {
             </Tag>
           </div>
         ))}
-        {saltKeys.length > 2&&
-       ( !showMore?.Strength  ?(
-          <p
-            key="show-more"
-            onClick={() => handleShowMore("Strength")}
-            style={{ cursor: 'pointer', color: 'blue' }}
-          >
-            ...more
-          </p>
-        ):  <p
-        key="show-more"
-        onClick={() => handleShowLess("Strength")}
-        style={{ cursor: 'pointer', color: 'blue' }}
-      >
-        ...hide
-      </p>)
-      }
+        {renderFooter(saltKeys,"Strength")}
+      
       </>
     );
   };
@@ -73,34 +84,19 @@ export const MedicineDetails: FC<Props> = ({ data }) => {
       );
     });
     return <>{elements}
-      {strengthKeys.length > 2
-      &&
-     ( !showMore?.Packaging  ?(
-      <p
-        key="show-more"
-        onClick={() => handleShowMore("Packaging")}
-        style={{ cursor: 'pointer', color: 'blue' }}
-      >
-        ...more
-      </p>
-    ): strengthKeys.length > 2 &&  <p
-    key="show-less"
-    onClick={() => handleShowLess("Packaging")}
-    style={{ cursor: 'pointer', color: 'blue' }}
-  >
-    ...hide
-  </p>)
-  }</>;
+          {renderFooter(strengthKeys,"Packaging")}
+      </>;
   };
   const handleAvailableMedicines = () => {};
   // This function handles active meds data when we select Farm
   const handleActiveMedsFarms = (salt: string) => {
+    console.log({salt})
     setActiveMeds((prev) => {
       const newStrength = Object.keys(salt_forms_json[salt])[0];
       const newPackaging = Object.keys(salt_forms_json[salt][newStrength])[0];
       return {
         ...prev,
-        Forms: salt,
+        Farm: salt,
         Strength: newStrength,
         Packaging: newPackaging,
       };
@@ -147,8 +143,8 @@ export const MedicineDetails: FC<Props> = ({ data }) => {
     return <>{displayMin}</>;
   };
   const renderSaltFarms = () => {
-    const saltKeys = Object.keys(saltForms);
-    const displayKeys = showMore?.Farm ? saltKeys : saltKeys?.length>2?saltKeys.slice(0, 2):saltKeys;
+    const farmKeys = Object.keys(saltForms);
+    const displayKeys = showMore?.Farm ? farmKeys : farmKeys.slice(0, 2);
     return (
       <>
         {displayKeys.map((farm) => (
@@ -158,28 +154,7 @@ export const MedicineDetails: FC<Props> = ({ data }) => {
             </Tag>
           </div>
         ))}
-        {saltKeys.length > 2 && 
-      (  !showMore?.Farm
-       ? (
-          <p
-            key="show-more"
-            onClick={() => handleShowMore("Farm")}
-            style={{ cursor: 'pointer', color: 'blue' }}
-          >
-            ...more
-          </p>
-        )
-      :
-      (
-        <p
-          key="show-less"
-          onClick={() => handleShowLess("Farm")}
-          style={{ cursor: 'pointer', color: 'blue' }}
-        >
-          ...hide
-        </p>
-      ))
-      }
+        {renderFooter(farmKeys,"Farm")}
       </>
     );
   };
@@ -203,6 +178,7 @@ export const MedicineDetails: FC<Props> = ({ data }) => {
   };
 
   const saltForms: any = salt_forms_json;
+  console.log(activeMeds)
   return (
     <>
       {activeMeds?.Farm ? (
@@ -217,8 +193,6 @@ export const MedicineDetails: FC<Props> = ({ data }) => {
               {renderSaltStrength()}
               {renderSaltPackaging()}
             </Col>
-
-            {/* render salt details */}
             <div
               className="d-flex"
               style={{
@@ -235,7 +209,6 @@ export const MedicineDetails: FC<Props> = ({ data }) => {
             {/* render pharmacy price */}
             <div className="d-flex" style={{ display: "flex", alignItems: "center", flex: 1 }}>
               <Row className="price-details">
-                {" "}
                 {handlePharmacyPrice(
                   saltForms[activeMeds?.Farm]?.[activeMeds?.Strength]?.[activeMeds?.Packaging]
                 )}
