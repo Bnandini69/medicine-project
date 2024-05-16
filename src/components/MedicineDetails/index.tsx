@@ -64,7 +64,7 @@ export const MedicineDetails: FC<Props> = ({ data }) => {
   // This function handles packaging data
   const handlePackagingData = (strength: Object): JSX.Element => {
     const strengthKeys = Object.keys(strength);
-    const displayKeys = showMore?.Strength ? strengthKeys : strengthKeys.slice(0, 2);
+    const displayKeys = showMore?.Packaging ? strengthKeys : strengthKeys.slice(0, 2);
     const elements = displayKeys.map((packaging) => {
       return (
         <div key={packaging} onClick={() => handleActiveMedsPackaging(packaging)}>
@@ -73,7 +73,8 @@ export const MedicineDetails: FC<Props> = ({ data }) => {
       );
     });
     return <>{elements}
-      {strengthKeys.length > 2&&
+      {strengthKeys.length > 2
+      &&
      ( !showMore?.Packaging  ?(
       <p
         key="show-more"
@@ -88,7 +89,8 @@ export const MedicineDetails: FC<Props> = ({ data }) => {
     style={{ cursor: 'pointer', color: 'blue' }}
   >
     ...hide
-  </p>)}</>;
+  </p>)
+  }</>;
   };
   const handleAvailableMedicines = () => {};
   // This function handles active meds data when we select Farm
