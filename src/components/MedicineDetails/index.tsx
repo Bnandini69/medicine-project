@@ -1,76 +1,133 @@
-import React, { FC, useEffect, useState } from 'react';
-import { Medicine } from '../Medicines';
-import { Card, Row, Tag } from 'antd';
+import { Card, Col, Row, Tag } from "antd";
+import React, { FC, useState } from "react";
+import { Medicine } from "../Medicines";
+import "./styles.css";
 
 interface Props {
   data: Medicine;
 }
-
+const MAX_ITEMS_PER_ROW = 2;
 export const MedicineDetails: FC<Props> = ({ data }) => {
-  const { available_forms = [], salt_forms_json = {},salt } = data;
+  const { available_forms = [], salt_forms_json = {}, salt = "" } = data;
   // state to check active Medicines
-    const firstFarm=Object.keys(salt_forms_json)[0];
-    const firstStrength= Object.keys(salt_forms_json[firstFarm])[0];
-    const firstPackaging= Object.keys(salt_forms_json[firstFarm][firstStrength])[0];
+  const firstFarm = Object.keys(salt_forms_json)[0];
+  const firstStrength = Object.keys(salt_forms_json[firstFarm])[0];
+  const firstPackaging = Object.keys(salt_forms_json[firstFarm][firstStrength])[0];
   const [activeMeds, setActiveMeds] = useState({
-    Forms: firstFarm,
+    Farm: firstFarm,
     Strength: firstStrength,
     Packaging: firstPackaging,
   });
+  const [showMore, setShowMore] = useState({Farm:false,Strength:false,Packaging:false});
+
+  const handleShowMore = (key:string) => {
+    setShowMore((prev)=>({...prev,[key]:true}));
+  };
+
+  const handleShowLess = (key:string) => {
+    setShowMore((prev)=>({...prev,[key]:false}));
+  };
+  
   // This function handles strength data
-  const handleStrengthData = (salt: Object): JSX.Element[] => {
-    return Object.keys(salt).map((strength,index) => {
-      return <div key={strength} onClick={()=>handleActiveMedsStrength(strength)}> 
-      <Tag color={activeMeds?.Strength===strength?"green":"grey"}> {strength}</Tag>
-      </div>;
-    });
+  const handleStrengthData = (salt: Object): JSX.Element => {
+    const saltKeys = Object.keys(salt);
+    const displayKeys = showMore?.Strength ? saltKeys : saltKeys.slice(0, 2);
+    return(
+      <>
+        {displayKeys.map((strength) => (
+          <div key={strength} onClick={() => handleActiveMedsStrength(strength)}>
+            <Tag color={activeMeds?.Strength === strength ? 'green' : ''}>
+              {strength}
+            </Tag>
+          </div>
+        ))}
+        {saltKeys.length > 2&&
+       ( !showMore?.Strength  ?(
+          <p
+            key="show-more"
+            onClick={() => handleShowMore("Strength")}
+            style={{ cursor: 'pointer', color: 'blue' }}
+          >
+            ...more
+          </p>
+        ):  <p
+        key="show-more"
+        onClick={() => handleShowLess("Strength")}
+        style={{ cursor: 'pointer', color: 'blue' }}
+      >
+        ...hide
+      </p>)
+      }
+      </>
+    );
   };
   // This function handles packaging data
   const handlePackagingData = (strength: Object): JSX.Element => {
-    const elements = Object.keys(strength).map((packaging) => {
-      return <div key={packaging} onClick={()=>handleActiveMedsPackaging(packaging)}> <Tag color={activeMeds?.Packaging===packaging?"green":"grey"}>{packaging}</Tag></div>;
+    const strengthKeys = Object.keys(strength);
+    const displayKeys = showMore?.Strength ? strengthKeys : strengthKeys.slice(0, 2);
+    const elements = displayKeys.map((packaging) => {
+      return (
+        <div key={packaging} onClick={() => handleActiveMedsPackaging(packaging)}>
+          <Tag color={activeMeds?.Packaging === packaging ? "green" : ""}>{packaging}</Tag>
+        </div>
+      );
     });
-    return <>{elements}</>;
+    return <>{elements}
+      {strengthKeys.length > 2&&
+     ( !showMore?.Packaging  ?(
+      <p
+        key="show-more"
+        onClick={() => handleShowMore("Packaging")}
+        style={{ cursor: 'pointer', color: 'blue' }}
+      >
+        ...more
+      </p>
+    ): strengthKeys.length > 2 &&  <p
+    key="show-less"
+    onClick={() => handleShowLess("Packaging")}
+    style={{ cursor: 'pointer', color: 'blue' }}
+  >
+    ...hide
+  </p>)}</>;
   };
-  const handleAvailableMedicines=()=>{
-
-  }
-   // This function handles active meds data when we select Farm
-  const handleActiveMedsForms = (salt: string) => {
+  const handleAvailableMedicines = () => {};
+  // This function handles active meds data when we select Farm
+  const handleActiveMedsFarms = (salt: string) => {
     setActiveMeds((prev) => {
       const newStrength = Object.keys(salt_forms_json[salt])[0];
       const newPackaging = Object.keys(salt_forms_json[salt][newStrength])[0];
-      return { 
-        ...prev, 
-        Forms: salt, 
-        Strength: newStrength, 
-        Packaging: newPackaging 
+      return {
+        ...prev,
+        Forms: salt,
+        Strength: newStrength,
+        Packaging: newPackaging,
       };
     });
-  
-  }
-   // This function handles active meds data when we select Strength
+  };
+  // This function handles active meds data when we select Strength
   const handleActiveMedsStrength = (strength: string) => {
     setActiveMeds((prev) => {
-      const newPackaging = Object.keys(salt_forms_json[prev?.Forms][strength])[0];
-      return { 
+      const newPackaging = Object.keys(salt_forms_json[prev?.Farm][strength])[0];
+      return {
         ...prev,
-        Strength: strength, 
-        Packaging: newPackaging 
+        Strength: strength,
+        Packaging: newPackaging,
       };
     });
-  }
-     // This function handles active meds data when we select Packaging
+  };
+  // This function handles active meds data when we select Packaging
   const handleActiveMedsPackaging = (packaging: string) => {
     setActiveMeds((prev) => {
-      return { 
+      return {
         ...prev,
-        Packaging: packaging 
+        Packaging: packaging,
       };
     });
-  }
-   // This function handles logic to find minimum price of meds and if its out of stock
-  const handlePharmacyPrice = (packaging: { [key: string]: { selling_price: number | null }[] | null }): JSX.Element => {
+  };
+  // This function handles logic to find minimum price of meds and if its out of stock
+  const handlePharmacyPrice = (packaging: {
+    [key: string]: { selling_price: number | null }[] | null;
+  }): JSX.Element => {
     let min = Infinity;
     Object.keys(packaging || {}).forEach((key: string) => {
       const medsArray = packaging[key];
@@ -82,65 +139,111 @@ export const MedicineDetails: FC<Props> = ({ data }) => {
         });
       }
     });
-  
+
     const displayMin = min === Infinity ? "No valid prices available" : `From ${min}`;
-  
+
     return <>{displayMin}</>;
   };
-
-
-  const saltForms:any= salt_forms_json;
   const renderSaltFarms = () => {
-    return Object.keys(saltForms).map((salt) => (
-      <React.Fragment key={salt}>
-        <Tag color={activeMeds.Forms === salt ? "green" : "grey"}>
-          <p onClick={() => handleActiveMedsForms(salt)}>{salt}</p>
-        </Tag>
-        <br />
-      </React.Fragment>
-    ));
-  };
-
-  const renderStrengthData = () => {
-    return <Row>Strength: {handleStrengthData(saltForms[activeMeds.Forms])}</Row>;
-  };
-
-  const renderPackagingData = () => {
+    const saltKeys = Object.keys(saltForms);
+    const displayKeys = showMore?.Farm ? saltKeys : saltKeys?.length>2?saltKeys.slice(0, 2):saltKeys;
     return (
-      <Row>
-        Packaging: {handlePackagingData(saltForms[activeMeds.Forms]?.[activeMeds.Strength])}
+      <>
+        {displayKeys.map((farm) => (
+          <div key={farm} onClick={() => handleActiveMedsFarms(farm)}>
+            <Tag color={activeMeds?.Farm === farm ? 'green' : ''}>
+              {farm}
+            </Tag>
+          </div>
+        ))}
+        {saltKeys.length > 2 && 
+      (  !showMore?.Farm
+       ? (
+          <p
+            key="show-more"
+            onClick={() => handleShowMore("Farm")}
+            style={{ cursor: 'pointer', color: 'blue' }}
+          >
+            ...more
+          </p>
+        )
+      :
+      (
+        <p
+          key="show-less"
+          onClick={() => handleShowLess("Farm")}
+          style={{ cursor: 'pointer', color: 'blue' }}
+        >
+          ...hide
+        </p>
+      ))
+      }
+      </>
+    );
+  };
+  
+  const renderSaltStrength = () => {
+    return (
+      <Row className="second-row" style={{ flex: 1 }}>
+        <div className="medicine-div-label">Strength:</div>
+        <div className="medicine-div-value">{handleStrengthData(saltForms[activeMeds?.Farm])}</div>
       </Row>
     );
   };
 
-  const renderPharmacyPrice = () => {
-    return (
-      <Row>
-        {handlePharmacyPrice(saltForms[activeMeds.Forms]?.[activeMeds.Strength]?.[activeMeds.Packaging])}
-      </Row>
-    );
-  };
-
-  const renderDetails = () => {
-    return (
-      <div className="d-flex" style={{ alignItems: 'center' }}>
-        {activeMeds.Forms} | {activeMeds.Strength} | {activeMeds.Packaging}
+  const renderSaltPackaging = () => {
+    return <Row className="third-row" style={{ flex: 1 }}>
+      <div className="medicine-div-label">Packaging:</div>
+      <div className="medicine-div-value">
+        {handlePackagingData(saltForms[activeMeds?.Farm][activeMeds?.Strength])}
       </div>
-    );
+    </Row>;
   };
 
+  const saltForms: any = salt_forms_json;
   return (
-    <Card>
-      <div className="d-flex" style={{ justifyContent: 'center' }}>
-        <Row>Farm: <div style={{ width: "30%" }}>{renderSaltFarms()}</div></Row>
-        {renderStrengthData()}
-        {renderPackagingData()}
-        {renderDetails()}
-        <div className="d-flex" style={{ alignItems: 'center' }}>
-          {renderPharmacyPrice()}
-        </div>
-      </div>
-    </Card>
+    <>
+      {activeMeds?.Farm ? (
+        <Card>
+          <div className="medicine-card">
+            {/* render farm data */}
+            <Col style={{ flex: 1 }}>
+              <Row className="first-row">
+                <div className="medicine-div-label">Form:</div>
+                <div className="medicine-div-value">{renderSaltFarms()}</div>
+              </Row>
+              {renderSaltStrength()}
+              {renderSaltPackaging()}
+            </Col>
+
+            {/* render salt details */}
+            <div
+              className="d-flex"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                flex: 1,
+                color: "#01498d",
+                justifyContent: "center",
+              }}
+            >
+              {salt}
+              {activeMeds?.Farm}|{activeMeds?.Strength}|{activeMeds?.Packaging}
+            </div>
+            {/* render pharmacy price */}
+            <div className="d-flex" style={{ display: "flex", alignItems: "center", flex: 1 }}>
+              <Row className="price-details">
+                {" "}
+                {handlePharmacyPrice(
+                  saltForms[activeMeds?.Farm]?.[activeMeds?.Strength]?.[activeMeds?.Packaging]
+                )}
+              </Row>
+            </div>
+          </div>
+        </Card>
+      ) : (
+        <>Loading.....</>
+      )}
+    </>
   );
 };
-

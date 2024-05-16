@@ -1,0 +1,67 @@
+.ant-card {
+  width: 65%;
+  margin: 0 auto;
+  border-radius: 20px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+  min-height: 180px;
+  background: linear-gradient(to left, rgb(230 244 230) 1%, transparent 27%);
+}
+.ant-card-body {
+  height: 100%;
+}
+.medicine-card {
+  display: flex !important;
+  justify-content: space-between;
+  height: 100%;
+}
+.first-row {
+  max-width: 60%;
+}
+.first-row,
+.second-row,
+.third-row {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  margin: 15px 0;
+}
+.medicine-div-value {
+  display: flex;
+}
+.medicine-div-label {
+  font-size: 15px;
+  min-width: 80px;
+  text-align: left;
+  border-radius: 5px;
+}
+.ant-tag{
+  border-radius: 8px;
+  min-width: 79px;
+  height: 35px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 10px;
+  width: fit-content;
+}
+.ant-tag.ant-tag-green {
+  color: black;
+  background: white;
+  border: 1.5px solid black;
+  box-shadow: 0 0 10px #136b6b;
+
+}
+
+.ant-tag.ant-tag-has-color{
+  color: grey !important;
+  border: 1px solid grey;
+  background-color: white;
+}
+.price-details{
+  font-size: 35px;
+  font-weight: 700;
+}
