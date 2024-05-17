@@ -1,0 +1,1 @@
+This component handles API calls for medicines based on the search data. By default, it fetches data for Paracetamol. Once the data is retrieved, it maps the medicine data and renders the MedicineDetails component to display details for each medicine.

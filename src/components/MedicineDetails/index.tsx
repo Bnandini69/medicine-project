@@ -290,7 +290,7 @@ export const MedicineDetails: FC<Props> = ({ data }) => {
             <Col style={{  maxWidth: "400px", minWidth:"350px" }}>
               {/* render farm data */}
               <Row className="first-row">
-                <div className="medicine-div-label">Form:</div>
+                <div className="medicine-div-label">Farm:</div>
                 <div className="medicine-div-value">{renderSaltFarms()}</div>
               </Row>
               {renderSaltStrength()}

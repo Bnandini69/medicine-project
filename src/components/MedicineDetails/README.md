@@ -1,0 +1,1 @@
+This component renders all the details of a specific medicine for each row, with each row having its own separate active states. It manages available stores, selected medicines, and packaging details. Additionally, it includes functionality for showing more or hiding details.
