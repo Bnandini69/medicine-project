@@ -2,11 +2,11 @@ import { Card, Col, Row, Tag } from "antd";
 import { FC, useState } from "react";
 import { Medicine } from "../Medicines";
 import "./styles.css";
+import cx from "../../cx";
 
 interface FarmType {
   [key: string]: boolean;
 }
-
 interface Props {
   data: Medicine;
 }
@@ -118,13 +118,14 @@ export const MedicineDetails: FC<Props> = ({ data }) => {
               });
             }
           );
+          const isSelected=activeMeds?.Strength === strength;
+          
           return (
             <div
               key={strength}
               className="strength-data"
-              onClick={() => handleActiveMedsStrength(strength)}
-              style={{ border: isAvailable ? "" : "1px dashed grey"}}>
-              <Tag color={activeMeds?.Strength === strength ? "green" : ""}bordered={false}>
+              onClick={() => handleActiveMedsStrength(strength)}>
+              <Tag color={isSelected ? "green" : ""} className={cx({isNotAvailable:!isAvailable},{isSelected})}>
                 {strength}
               </Tag>
             </div>
@@ -135,7 +136,6 @@ export const MedicineDetails: FC<Props> = ({ data }) => {
     );
   };
 
-  // This function handles packaging data
   // This function handles packaging data
   const handlePackagingData = (strength: Object): JSX.Element => {
     const strengthKeys = Object.keys(strength);
@@ -157,6 +157,7 @@ export const MedicineDetails: FC<Props> = ({ data }) => {
           isAvailable = true;
         }
       });
+      const isSelected=activeMeds?.Packaging === packaging;
       return (
         <div
           key={packaging}
@@ -164,10 +165,9 @@ export const MedicineDetails: FC<Props> = ({ data }) => {
           style={{
             display: "inline-block",
             margin: "5px",
-            // border: isAvailable ? "" : "1px solid red",
-            // padding: "5px 10px",
+            
           }}>
-          <Tag color={activeMeds?.Packaging === packaging ? "green" : ""}>
+          <Tag color={isSelected ? "green" : ""}  className={cx({isNotAvailable:!isAvailable},{isSelected})}>
             {packaging}
           </Tag>
         </div>
@@ -247,9 +247,8 @@ export const MedicineDetails: FC<Props> = ({ data }) => {
           return (
             <div
               key={farm}
-              onClick={() => handleActiveMedsFarms(farm)}
-              style={{ borderColor: isAvailable ? "" : "red" }}>
-              <Tag color={isSelected ? "green" : ""}>{farm}</Tag>
+              onClick={() => handleActiveMedsFarms(farm)}>
+              <Tag color={isSelected ? "green" : ""} className={cx({isNotAvailable:!isAvailable},{isSelected})}>{farm}</Tag>
             </div>
           );
         })}

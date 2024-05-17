@@ -49,6 +49,7 @@
   border-radius: 8px;
   min-width: 79px;
   height: 35px;
+  color:grey;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -56,12 +57,22 @@
   font-weight: 600;
   padding: 10px;
   width: fit-content;
+  box-shadow:none;
 }
 .ant-tag.ant-tag-green {
   color: black;
   background: white;
   border: 1.5px solid black;
   box-shadow: 0 0 10px #136b6b;
+}
+
+.ant-tag.ant-tag-green.isNotAvailable{
+  border: 1.5px dashed black;
+  box-shadow:none
+
+}
+.ant-tag.isNotAvailable{
+  border: 1.5px dashed grey;
 }
 
 .ant-tag.ant-tag-has-color {
